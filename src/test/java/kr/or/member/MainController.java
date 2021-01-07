@@ -31,6 +31,13 @@ public class MainController {
 		memberVO3.setName("정도영");
 		memberVO3.setAge(28);
 		memberVO3.setPhoneNum("222-2222-2222");
+		
+		if(memberVO2 == memberVO3) {
+			System.out.println("동일객체=인스턴스");
+		}else {
+			System.out.println("다른오브젝트");
+		}
+		
 		// 각 레코드마다 담을 수 있는 클래스오브젝트를 생성
 		MemberVO[] members = new MemberVO[3];
 		members[0] = memberVO;
