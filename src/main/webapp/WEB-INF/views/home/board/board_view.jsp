@@ -28,28 +28,39 @@
 		<!-- 메인본문영역 -->
 		<div class="bodytext_area box_inner">			
 			<ul class="bbsview_list">
-				<li class="bbs_title">박물관 미션 투어 응모 당첨자 발표</li>
-				<li class="bbs_hit">작성일 : <span>2018.08.09</span></li>
-				<li class="bbs_date">조회수 : <span>235</span></li>
+				<li class="bbs_title"><c:out value="${boardVO.title}" /></li>
+				<!-- c:out태그는 jstl자바 스탠다드태그 라이브러리의 명령으로서 자바의 System.out.println() -->
+				<li class="bbs_hit">작성일 : <span><fmt:formatDate pattern="yyyy-MM-dd HH:mm" value="${boardVO.reg_date}" /></span></li>
+				<li class="bbs_date">조회수 : <span>${boardVO.view_count}</span></li>
 				<li class="bbs_content">
 					<div class="editer_content">
-					    안녕하세요. 믿을 수 있는 스프링정보, 스프링입니다.<br>
-                        박물관 미션투어에 관심과 참여 감사드립니다. <br>
-                        선정되신 분들도 진심으로 축하드립니다. <br>
-                        앞으로도 큰 관심 부탁드리며, 메일로도 안내 예정이니 참고하시기 바랍니다. <br>
-                        감사합니다. <br><br>
-                        [당첨자]<br>
-                        김용* kimyong***@naver.com <br>
-                        인봉* in2018a***@naver.com<br>
-                        예경* yyhong***@naver.com<br>
-                        한진* haha***@naver.com<br>
-                        박수* pky**@naver.com<br>
-                        명진* mma5**@nate.com<br>
-                        김영* rtfg6*@naver.com<br>
-                        서영* seo20**@gmail.com<br>
-                        윤소* yoon2***@naver.com<br>
-                        지은* ji***@daum.net
+					   ${boardVO.content}
                     </div>
+				</li>
+				<li class="bbs_title" style="height:inherit;">
+				첨부파일 다운로드
+				<c:forEach begin="0" end="1" var="index">
+					<c:if test="${boardVO.save_file_names[index] != null}">
+						<br>
+						<a href="/download?save_file_name=${boardVO.save_file_names[index]}&real_file_name=${boardVO.real_file_names[index]}">${boardVO.real_file_names[index]}다운로드 링크[${index}]</a>
+						<c:set var="fileNameArray" value="${fn:split(boardVO.save_file_names[index],'.')}" />
+		                <c:set var="extName" value="${fileNameArray[fn:length(fileNameArray)-1]}" />
+		                <!-- length결과는 2 - 1 = 배열의 인덱스1 -->
+		                <!-- 첨부파일이 이미지 인지 아닌지 비교해서 img태그를 사용할 지 결정(아래) -->
+		                <!-- fn:contains함수({'jpg','gif','png'...}비교배열내용,JPG,jpg첨부파일확장자) -->
+		                <c:choose>
+		                	<c:when test="${fn:containsIgnoreCase(checkImgArray,extName)}">
+		                		<br>
+		                		<img style="width:100%;" src="/image_preview?save_file_name=${boardVO.save_file_names[index]}&real_file_name=${boardVO.real_file_names[index]}">
+		                	</c:when>
+		                	<c:otherwise>
+		                		<c:out value="${checkImgArray}" />
+		                		<!-- 사용자홈페이지 메인 최근게시물 미리보기 이미지가 없을때 사용예정. -->
+		                	</c:otherwise>
+		                </c:choose>
+		                <!-- true이면 이미지파일 이란 의미 -->
+					</c:if>
+				</c:forEach>
 				</li>
 			</ul>
 			<p class="btn_line txt_right">
@@ -85,43 +96,20 @@
 	          <div class="timeline">
 	          	  <!-- .time-label의 before 위치 -->
 		          <div class="time-label">
-	                <span class="bg-red">Reply List[1]&nbsp;&nbsp;</span>
+	                <span data-toggle="collapse" data-target="#div_reply" class="bg-red btn" id="btn_reply_list">Reply List[${boardVO.reply_count}]&nbsp;&nbsp;</span>
 	              </div>
-	              <!-- .time-label의 after 위치 -->
-		          <!-- <div>
-	                <i class="fas fa-envelope bg-blue"></i>
-	                <div class="timeline-item">
-	                  <h3 class="timeline-header">작성자</h3>
-	                  <div class="timeline-body">
-	                    	댓글 입력 테스트
-	                  </div>
-	                  <div class="timeline-footer">
-	                    Button trigger modal
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#replyModal">
-						  수정
-						</button>
-	                  </div>
-	                </div>
-	              </div> -->
-	              
-	          </div><!-- //.timeline -->
-	          <!-- 페이징처리 시작 -->
+	              <div id="div_reply" class="timeline collapse">
+	             
+	              <!-- 페이징처리 시작 -->
 	          <div class="pagination justify-content-center">
-	            	<ul class="pagination">
-	            	 <li class="paginate_button page-item previous disabled" id="example2_previous">
-	            	 <a href="#" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
-	            	 </li>
-	            	 <!-- 위 이전게시물링크 -->
-	            	 <li class="paginate_button page-item active"><a href="#" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">1</a></li>
-	            	 <li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="2" tabindex="0" class="page-link">2</a></li>
-	            	 <li class="paginate_button page-item "><a href="#" aria-controls="example2" data-dt-idx="3" tabindex="0" class="page-link">3</a></li>
-	            	 <!-- 아래 다음게시물링크 -->
-	            	 <li class="paginate_button page-item next" id="example2_next">
-	            	 <a href="#" aria-controls="example2" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
-	            	 </li>
+	            	<ul class="pagination pageVO">
+	           
 	            	 </ul>
 	          </div>
-		  	  <!-- 페이징처리 끝 -->     
+		  	  <!-- 페이징처리 끝 -->
+	              </div>
+	          </div><!-- //.timeline -->
+		  	  <input type="hidden" name="reply_page" id="reply_page" value="1">   
 	      </div>
 <!-- 댓글영역 끝 -->
 <!-- 자바스트립트용 #template 엘리먼트 제작(아래) jstl 향상된 for문과 같은 역할 
@@ -137,7 +125,7 @@ jstl을 사용하려면, jsp에서 @taglib uri=... 처럼 외부 core를 가져�
  <i class="fas fa-envelope bg-blue"></i>
  <div class="timeline-item">
    <h3 class="timeline-header">{{replyer}}</h3>
-   <div class="timeline-body">{{replytext}}</div>
+   <div class="timeline-body">{{reply_text}}</div>
    <div class="timeline-footer">
 	 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#replyModal">
   		수정
@@ -154,8 +142,67 @@ var printReplyList = function(data, target, templateObject) {
 	var template = Handlebars.compile(templateObject.html());//html태그로 변환
 	var html = template(data);//빅데이터를 리스트템플릿에 바인딩 결합시켜주는 역할. 변수html에 저장되었음.
 	$(".template-div").remove();//화면에 보이는 댓글리스트만 지우기.
-	target.after(html);//target은 .time-label 클래스영역을 가리킵니다.
+	target.prepend(html);//target은 .time-label 클래스영역을 가리킵니다.
 };
+</script>
+<!-- 댓글 페이징 재구현Representation하는 함수(아래) -->
+<script>
+var printPageVO = function(pageVO, target) {
+	 var paging = "";
+	 if(pageVO.prev){
+		 paging = paging + '<li class="paginate_button page-item previous disabled" id="example2_previous"><a href="'+(pageVO.startPage-1)+'" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>';
+	 }
+	 for(cnt=pageVO.startPage;cnt<=pageVO.endPage;cnt++){ var active = (cnt==pageVO.page)?"active":"";
+		 paging = paging + '<li class="paginate_button page-item '+active+'"><a href="'+cnt+'" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">'+cnt+'</a></li>';
+	 }
+	 if(pageVO.next){
+		 paging = paging + '<li class="paginate_button page-item next" id="example2_next"><a href="'+(pageVO.endPage+1)+'" aria-controls="example2" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li>';
+	 }
+	 target.html(paging);
+}
+</script>
+<!-- 댓글 리스트 실행 하는 함수(아래) -->
+<script>
+var replyList = function(){
+	var page = $("#reply_page").val();//현재 지정된 댓글 페이지 값 가져오기
+	$.ajax({
+		url:"/reply/reply_list/${boardVO.bno}/"+page,//쿼리스트링X, 패스베리어블로 보냅니다.
+		type:"post",//원래는 get인데, post로 보낼수 있음.
+		dataType:"json",
+		success:function(result){
+			if(result=="undefined" || result=="" || result==null){
+				$("#div_reply").empty();
+				alert("조회된 값이 없습니다.");
+			}else{
+				printReplyList(result.replyList, $("#div_reply"),$("#template"));//댓글리스트출력
+				printPageVO(result.pageVO, $(".pageVO"));
+			}
+		},
+		error:function(){
+			
+		}
+	});
+}
+</script>
+<!-- 페이징의 번호 링크액션 함수(아래) -->
+<script>
+$(document).ready(function(){
+	$(".pageVO").on("click","li a",function(event){
+		event.preventDefault();//디폴트 액션 링크이동 방지
+		var page = $(this).attr("href");//겟GET
+			$("#reply_page").val(page);//셋SET 매개변수가 없으면 겟
+			//alert("디버그" + page);
+	});
+});
+</script>
+<!-- 댓글 리스트 버튼 클릭이벤트 처리(아래) -->
+<script>
+$(document).ready(function(){
+	$("#btn_reply_list").on("click", function(){
+		//alert("디버그");
+		replyList();//댓글 리스트 함수 호출
+	});
+});
 </script>
 <!-- 댓글 등록 버튼 액션 처리(아래) -->
 <script>
