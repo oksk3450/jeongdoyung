@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
+import org.edu.vo.AttachVO;
 import org.edu.vo.BoardVO;
 import org.edu.vo.PageVO;
 import org.springframework.stereotype.Repository;
@@ -36,9 +37,15 @@ public class BoardDAOImpl implements IF_BoardDAO {
 		// 게시물 상세보기 매퍼쿼리 연결(아래)
 		return sqlSession.selectOne("boardMapper.readBoard", bno);
 	}
-
+	
 	@Override
-	public List<HashMap<String,Object>> readAttach(Integer bno) throws Exception {
+	public List<AttachVO> readAttach(Integer bno) throws Exception {
+		// 게시물에 딸린 첨부파일 보기 매퍼쿼리 연결(아래) 해시 #
+		return sqlSession.selectList("boardMapper.readAttach", bno);
+	}
+	
+	@Override
+	public List<HashMap<String,Object>> readAttach_noUse(Integer bno) throws Exception {
 		// 게시물에 딸린 첨부파일 보기 매퍼쿼리 연결(아래) 해시 #
 		return sqlSession.selectList("boardMapper.readAttach", bno);
 	}
