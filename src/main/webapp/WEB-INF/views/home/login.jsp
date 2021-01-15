@@ -31,8 +31,8 @@ if("${param.msg}" == "fail") {
 			<!-- 만약 스프링시큐리티의 csrf 공격을 허용하지 않겠다면 아래처럼 form을 바꿔야함 -->
 			<!-- secform태그로 form을 감싸주면, xss공격도 차단시킴 -->
 			<!-- sectoken태그로 csrf공격 차단 -->
-			<!--
-			<secform:form method="POST" commandName="login_form" action="login.html" class="appForm">
+			<!-- commandName Deprecated(더이상 지원안함)되어서 modelAttribute 변경.
+			<secform:form method="POST" modelAttribute="login_form" action="login.html" class="appForm">
 				<sectoken:csrfInput />
 			</secform:form>
 			-->
