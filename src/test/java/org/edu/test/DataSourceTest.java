@@ -154,7 +154,7 @@ public class DataSourceTest {
 	public void oldQueryTest() throws Exception {
 		//Connection connection = dataSource.getConnection();//root-context사용
 		Connection connection = null;
-		connection = DriverManager.getConnection("jdbc:hsqldb:file:e:/egov/workspace/embeded/hsql_file.db","sa","");
+		connection = DriverManager.getConnection("jdbc:hsqldb:file:e:/egov/workspace/embeded/hsql_file.db;hsqldb.lock_file=false","sa","");
 		//직접 쿼리를 날립니다.(아래)
 		Statement stmt = connection.createStatement();
 		/* 인서트 쿼리실행(아래) 
