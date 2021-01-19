@@ -17,13 +17,18 @@
         <property name="locations">
             <list>
                 <!-- 로컬 개발일때 사용(아래) -->
-                <!-- <value>classpath:/properties/local.properties</value> -->
+                
+                <value>classpath:/properties/local.properties</value>
+               
                 <!-- 운영서버 배포일때 사용 -->
+                <!-- 
                 <value>classpath:/properties/prod.properties</value>
+                 -->
             </list>
         </property>
     </bean>
 	<!-- 알리아스(Alias)별칭인 dataSource을 사용할수도 있음. -->
+	
 	<alias name="dataSource-${DbType}" alias="dataSource" />
 	
 	<!-- HSQLDB FILE기반 사용 헤로쿠에 올릴때 생성경로는 /tmp/embeded/hsql_file.db;hsqldb.lock_file=false, 로컬PC일때 경로는 e:/egov/workspace/embeded/hsql_file.db;hsqldb.lock_file=false-->   
@@ -42,12 +47,12 @@
 		<property name="password" value="" />
 	</bean>
 	
-	<!-- CREATE TABLE 초기 1회만 실행 -->
-	
+	<!-- CREATE TABLE 초기 1회만 실행, 헤로쿠 배포시 주석 해제 -->
+	<!-- 
 	<jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS"> 
 		<jdbc:script location="classpath:/db/embeded_hsql_file.sql" /> 
 	</jdbc:initialize-database>
-	
+	 -->
 	<!-- jdbc:hsqldb:mem:dataSource / jdbc:hsqldb:file:e:/egov/workspace/embeded/hsql_file.db -->
 	<!-- 테스트 실행용 DB매니저 실행:실제 사용시 아래 value - - 공백제거 하세요. -->
 	
