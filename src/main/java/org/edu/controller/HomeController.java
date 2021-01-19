@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.FilenameUtils;
 import org.edu.dao.IF_BoardDAO;
 import org.edu.service.IF_BoardService;
 import org.edu.util.CommonController;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,6 +53,26 @@ public class HomeController {
 	@RequestMapping(value="/home/error/404",method=RequestMethod.GET)
 	public String error404() throws Exception {
 		return "home/error/404";
+	}
+	
+	//사용자 홈페이지 게시판 삭제 매핑
+	@RequestMapping(value="/home/board/board_delete",method=RequestMethod.POST)
+	public String board_delete(RedirectAttributes rdat, @RequestParam("bno") Integer bno, @RequestParam("page") Integer page) throws Exception {
+		//첨부파일 삭제처리 후 게시글삭제(아래)
+		List<AttachVO> delFiles = boardService.readAttach(bno);
+		if(!delFiles.isEmpty()) {
+			for(AttachVO file_name:delFiles) {
+				File target = new File(commonController.getUploadPath(),file_name.getSave_file_name());
+				if(target.exists()) {
+					target.delete();//실제 업로드된 파일 지우기
+				}
+			}
+		}
+		//DB에서 댓글삭제 후 게시글 삭제(아래)
+		boardService.deleteBoard(bno);
+		
+		rdat.addFlashAttribute("msg", "삭제");//msg변수값은 URL에 표시가 나오지않게 숨겨서 board_list로 보냄
+		return "redirect:/home/board/board_list?page="+page;//쿼리스트링 변수는 URL에 표시가 됨.
 	}
 	
 	//사용자 홈페이지 게시판 상세보기 매핑
@@ -115,8 +137,11 @@ public class HomeController {
 		}
 		boardVO.setSave_file_names(save_file_names);
 		boardVO.setReal_file_names(real_file_names);
-		boardService.updateBoard(boardVO);//DB에 신규파일 저장기능 호출
+		//시큐어코딩 추가(아래)
+		String xssData = boardVO.getContent();
+		boardVO.setContent(securityCode.unscript(xssData));
 		
+		boardService.updateBoard(boardVO);//DB에 신규파일 저장기능 호출
 		//게시판 테이블 업데이트+첨부파일테이블 업데이트
 		rdat.addFlashAttribute("msg", "수정");
 		return "redirect:/home/board/board_view?bno="+boardVO.getBno()+"&page="+pageVO.getPage();
@@ -166,6 +191,9 @@ public class HomeController {
 		
 		boardVO.setSave_file_names(save_file_names);
 		boardVO.setReal_file_names(real_file_names);
+		//보안코딩으로 script 제거(아래)
+		String xssData = boardVO.getContent();
+		boardVO.setContent(securityCode.unscript(xssData));
 		
 		boardService.insertBoard(boardVO);//실제 DB 인서트
 		rdat.addFlashAttribute("msg", "저장");
@@ -210,11 +238,47 @@ public class HomeController {
 	}
 	
 	//사용자 홈페이지 루트(최상위) 접근 매핑
-	@RequestMapping(value="/",method=RequestMethod.GET)
-	public String home() throws Exception{
-		
-		return "home/home";
-	}
+		@RequestMapping(value="/",method=RequestMethod.GET)
+		public String home(Model model) throws Exception{
+			PageVO pageVO = new PageVO();
+			pageVO.setPage(1);
+			pageVO.setPerPageNum(5);//하단페이징
+			pageVO.setQueryPerPageNum(5);
+			List<BoardVO> board_list = boardService.selectBoard(pageVO);
+			//System.out.println("디버그" + board_list);
+			model.addAttribute("board_list", board_list);
+			
+			//첨부파일 1개만 model클래스를 이용해서 jsp로 보냅니다.
+			String[] save_file_names = new String[board_list.size()];
+			int cnt = 0;
+			for(BoardVO boardVO:board_list) {//board_list변수에는 최대 5개의 레코드가 존재함.
+				List<AttachVO> file_list = boardService.readAttach(boardVO.getBno());
+				//System.out.println("디버그-file_list" + file_list);
+				if(file_list.size() == 0) {//첨부파일이 없을떄
+					save_file_names[cnt] = "";
+					System.out.println("디버그-[" + cnt + "]" + save_file_names[cnt]);
+					//continue;//컨티뉴 아래는 실행 하지 않고 거너띔
+				} else {
+					for(AttachVO file_name:file_list) {
+						String save_file_name = file_name.getSave_file_name();
+						String extName = FilenameUtils.getExtension(save_file_name);
+						boolean imgCheck = commonController.getCheckImgArray().contains(extName.toLowerCase());
+						if(imgCheck) {//첨부파일이 이미지일때
+							save_file_names[cnt] = save_file_name;
+							System.out.println("디버그[" + cnt + "]" + save_file_names[cnt]);
+							break;//이중 반복문에서 현재 for문만 종료
+						} else {//첨부파일이 엑셀,한글같은 파일일때
+							save_file_names[cnt] = "";
+							System.out.println("디버그[" + cnt + "]" + save_file_names[cnt]);
+						}
+					}
+				}
+				cnt = cnt + 1;
+			}
+			
+			model.addAttribute("save_file_names", save_file_names);
+			return "home/home";
+		}
 	
 	/*@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {

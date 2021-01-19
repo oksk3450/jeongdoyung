@@ -98,7 +98,7 @@ public class CommonController {
 	baos.close();//스프링프레임워크 기반의 프로그램구조에서는 close와 같은 메모리관리를 할 필요 없음.(스프링에 가비지컬렉트 기능 내장)
 	final HttpHeaders headers = new HttpHeaders();//크롬 개발자도구>네트워크>image_preview클릭>헤더탭확인
 	String ext = FilenameUtils.getExtension(save_file_name);//파일 확장자 구하기
-	switch(ext) {
+	switch(ext.toLowerCase()) {//확장자 소문자로 변경후 스위치 ~ 케이스문으로 분리
 	case "png":
 		headers.setContentType(MediaType.IMAGE_PNG);break;
 	case "jpg":

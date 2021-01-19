@@ -22,6 +22,7 @@ import org.edu.vo.MemberVO;
 import org.edu.vo.PageVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,6 +36,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * @author 정도영
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+//@PropertySource("classpath:properties/local.properties")//현재 클래스에서 전역변수 사용시 필요
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring/**/*.xml"})
 @WebAppConfiguration
 public class DataSourceTest {

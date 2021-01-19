@@ -17,15 +17,15 @@
         <property name="locations">
             <list>
                 <!-- 로컬 개발일때 사용(아래) -->
-                <value>classpath:/properties/local.properties</value>
+                <!-- <value>classpath:/properties/local.properties</value> -->
                 <!-- 운영서버 배포일때 사용 -->
-                <!-- value>file:/properties/prod.properties</value-->
+                <value>file:/properties/prod.properties</value>
             </list>
         </property>
     </bean>
-	<!-- 알리아스(Alias)별칭인 dataSource을 사용할수도 있음.(이후 사용)
+	<!-- 알리아스(Alias)별칭인 dataSource을 사용할수도 있음. -->
 	<alias name="dataSource-${DbType}" alias="dataSource" />
-	-->
+	
 	<!-- HSQLDB FILE기반 사용 헤로쿠에 올릴때 생성경로는 /tmp/embeded/hsql_file.db;hsqldb.lock_file=false, 로컬PC일때 경로는 e:/egov/workspace/embeded/hsql_file.db;hsqldb.lock_file=false-->   
 	
 	<bean id="dataSource-hsql_local" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> 
