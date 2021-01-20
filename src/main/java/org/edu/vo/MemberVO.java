@@ -2,6 +2,8 @@ package org.edu.vo;
 
 import java.util.Date;
 
+import javax.validation.constraints.Min;
+
 import org.springframework.stereotype.Component;
 /**
  * 회원정보관리용 클래스
@@ -15,6 +17,7 @@ public class MemberVO {
 	private String user_pw;
 	private String user_name;
 	private String email;
+	@Min(value=0,message="1이상의 숫자만 입력가능합니다.")
 	private Integer point;//int 기본형 > 참조형은 Integer 클래스(null가능) 클래스변수
 	//member_write.jsp에서 전송값이 point가 빈값으로 올때, int형은 에러발생, Integer형은 에러없음.
 	private Boolean enabled;//불린형은 true, false 2개의 값중 1개.
