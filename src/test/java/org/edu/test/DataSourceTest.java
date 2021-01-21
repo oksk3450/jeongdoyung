@@ -76,7 +76,8 @@ public class DataSourceTest {
 		//MemberVO memberVO = new MemberVO();
 		memberVO.setUser_id("dummy_1");
 		memberVO.setUser_name("홍길동");
-		memberVO.setUser_pw("");//암호를 수정하지 않는 사람을 가정..
+		memberVO.setUser_pw("");//이 셋을 적용하면, memberVO.getUser_pw() == ""
+		//memberVO.setUser_pw("");//이 셋을 주석처리하면, memberVO.getUser_pw() == null
 		memberVO.setEmail("test@test.com");
 		memberVO.setPoint(100);
 		memberVO.setEnabled(true);
