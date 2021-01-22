@@ -12,6 +12,8 @@ package org.edu.vo;
  *
  */
 public class PageVO {
+	//다중게시판 추가로 매퍼쿼리에 보낼 board_type변수 필요
+	private String board_type;
 	//예를 들면 변수 중에 boolean(일반형데이터형) / boolean(대문자로 시작, 클래스형 변수, Null로 입력되었을때 처리하는 로직이 들어있다.)
 	private int perPageNum;//리스트하단에 보이는 페이징번호의 개수값이 들어가는 변수
 	private int queryPerPageNum;//쿼리에서 사용하는 1페이지당 출력할 개수 변수
@@ -27,6 +29,17 @@ public class PageVO {
 	//검색에 필요한 변수 2개도 포함시켜서, 컨트롤러에서 매개변수 사용을 축소하게 됨.
 	private String search_type;//검색조건
 	private String search_keyword;//검색어
+	
+	public String getBoard_type() {
+		this.board_type = "notice";//세션변수를 사용할 예정.
+		return board_type;
+	}
+
+	public void setBoard_type(String board_type) {
+		this.board_type = board_type;
+	}
+
+
 	
 	//전체 클래스에서 [계산식]이 4개 필요함. 개발자가 제작.
 	//계산식 4개로 반환되는 값은 : startPage(11), endPage(20), prev(true), next(false)

@@ -75,7 +75,7 @@ if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
           <img src="/resources/dist/img/photo1.png" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">관리자</a>
+          <a href="#" class="d-block">${session_username}</a>
         </div>
       </div>
 
@@ -124,11 +124,37 @@ if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/admin/board/board_list" class="nav-link">
+                <a href="/admin/boa/boa_list" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
-                  <p>게시물 관리</p>
+                  <p>게시판 생성 관리</p>
                 </a>
               </li>
+             
+              <!-- 메뉴바 -->
+              <li class="nav-item menu-is-opening menu-open">
+                <a href="#" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>
+                                      게시물 관리
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview" style="display: block;">
+                  <li class="nav-item">
+                    <a href="/admin/board/board_list?board_type=notice" class="nav-link <c:out value='${(session_board_type eq "notice")?"active":""}' /> ">
+                      <i class="far fa-dot-circle nav-icon"></i>
+                      <p>공지사항</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="/admin/board/board_list?board_type=gallery" class="nav-link <c:out value='${(session_board_type eq "gallery")?"active":""}' /> ">
+                      <i class="far fa-dot-circle nav-icon"></i>
+                      <p>갤러리</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <!-- 메뉴바 -->
             </ul>
           </li>
          
