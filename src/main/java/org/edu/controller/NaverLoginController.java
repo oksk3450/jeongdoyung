@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpSession;
 
 import org.edu.util.NaverLoginApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -27,9 +28,15 @@ public class NaverLoginController {
 	 * redirect_url: 네이버 로그인 인증결과를 전달받는 콜백URL
 	 * state:  네이버App이 생성한 토큰(네트웍에서 전송되는 자료단위)의 상태
 	 */
-	private final static String CLIENT_ID = "jEZLJZGTf4LojZrMlRv_";
-	private final static String CLIENT_SERECT= "-----";
-	private final static String REDIRECT_URI = "http://127.0.0.1:8080/login_callback";
+	@Value("${SnsClientID}")
+	private String CLIENT_ID;
+	@Value("${SnsClientSecret}")
+	private String CLIENT_SECRET;
+	@Value("${SnsCallbackUri}")
+	private String REDIRECT_URI;
+	//private final static String CLIENT_ID = "jEZLJZGTf4LojZrMlRv_";
+	//private final static String CLIENT_SECRET= "-----";
+	//private final static String REDIRECT_URI = "http://127.0.0.1:8080/login_callback";
 	private final static String SESSION_STATE = "oauth_state";
 	/*프로필 조회 API URL - 사용자이름+사용자이메일*/
 	private final static String PROFILE_API_URL = "https://openapi.naver.com/v1/nid/me";
@@ -44,7 +51,7 @@ public class NaverLoginController {
 		//Scribe외부모듈에서 제공하는 인증 URL생성 기능을 이용하여 네아로 인증URL 생성(아래)
 		OAuth20Service oauthService = new ServiceBuilder()
 				.apiKey(CLIENT_ID)
-				.apiSecret(CLIENT_SERECT)
+				.apiSecret(CLIENT_SECRET)
 				.callback(REDIRECT_URI)
 				.state(state)
 				.build(NaverLoginApi.instance());//instance바로호출 static으로 정의되어서 
@@ -58,7 +65,7 @@ public class NaverLoginController {
 		if(StringUtils.pathEquals(sessionState, state)) {
 			OAuth20Service oauthService = new ServiceBuilder()
 					.apiKey(CLIENT_ID)
-					.apiSecret(CLIENT_SERECT)
+					.apiSecret(CLIENT_SECRET)
 					.callback(REDIRECT_URI)
 					.state(state)
 					.build(NaverLoginApi.instance());
@@ -89,7 +96,7 @@ public class NaverLoginController {
 		
 		OAuth20Service oauthService = new ServiceBuilder()
 				.apiKey(CLIENT_ID)
-				.apiSecret(CLIENT_SERECT)
+				.apiSecret(CLIENT_SECRET)
 				.callback(REDIRECT_URI)
 				.build(NaverLoginApi.instance());//인스턴스 클래스=실행 클래스 생성
 		OAuthRequest request = new OAuthRequest(Verb.GET, PROFILE_API_URL, oauthService);

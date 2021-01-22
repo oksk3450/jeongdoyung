@@ -1,10 +1,11 @@
 
 public class test {
-
 	public static void main(String[] args) {
-		int x = 10;
-		int y = 10;
-		
+		int sum = 0;
+		int i = 0;
+		for (i = 3; i <= 100; i += 3) {
+			sum += i;
+		}
+		System.out.println(sum);
 	}
-
 }
