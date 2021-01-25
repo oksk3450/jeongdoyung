@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!-- 관리자단 헤더 시작 header.jsp -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -124,7 +125,7 @@ if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/admin/boa/boa_list" class="nav-link">
+                <a href="/admin/bbs_type/bbs_type_list" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>게시판 생성 관리</p>
                 </a>
@@ -140,18 +141,14 @@ if('${msg}' != '') {//자바의 EL표기법 = 달라{변수명}
                   </p>
                 </a>
                 <ul class="nav nav-treeview" style="display: block;">
+                <c:forEach items="${board_type_list}" var="boardTypeVO">
                   <li class="nav-item">
-                    <a href="/admin/board/board_list?board_type=notice" class="nav-link <c:out value='${(session_board_type eq "notice")?"active":""}' /> ">
+                    <a href="/admin/board/board_list?board_type=${boardTypeVO.board_type}" class="nav-link <c:out value='${(session_board_type eq boardTypeVO.board_type)?"active":""}' /> ">
                       <i class="far fa-dot-circle nav-icon"></i>
-                      <p>공지사항</p>
+                      <p>${boardTypeVO.board_name}</p>
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a href="/admin/board/board_list?board_type=gallery" class="nav-link <c:out value='${(session_board_type eq "gallery")?"active":""}' /> ">
-                      <i class="far fa-dot-circle nav-icon"></i>
-                      <p>갤러리</p>
-                    </a>
-                  </li>
+                  </c:forEach>
                 </ul>
               </li>
               <!-- 메뉴바 -->
