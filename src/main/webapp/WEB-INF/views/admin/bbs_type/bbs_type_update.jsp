@@ -27,7 +27,6 @@
     <section class="content">
       <div class="container-fluid">
        
-        
         <div class="row"><!-- 부트스트랩의 디자인 클래스 row -->
           <div class="col-12"><!-- 그리드시스템중 12가로칼럼 width:100% -->
           
@@ -62,6 +61,7 @@
           <!-- 버튼영역 시작 -->
             <div class="card-body">
             	<a href="/admin/bbs_type/bbs_type_list" class="btn btn-primary float-right mr-1">목록</a>
+              	<button id="btn_delete" type="button" class="btn btn-warning float-right mr-1">삭제</button>
               	<button type="submit" class="btn btn-danger float-right mr-1">수정</button>              	
               	<!-- a태그는 링크이동은 되지만, post값을 전송하지는 못합니다. 그래서, button태그를 사용. -->
             </div>
@@ -72,7 +72,6 @@
           </div>
         </div>
         
-       
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
@@ -80,3 +79,14 @@
   <!-- /.content-wrapper -->
  
 <%@ include file="../include/footer.jsp" %>
+<script>
+jQuery(document).ready(function(){
+	jQuery("#btn_delete").on("click",function(){
+		if(confirm("정말로 삭제하겠습니까?")){
+			var delete_form = jQuery("form[name='update_form']");//폼선택영역 단축변수 만들기
+			delete_form.attr("action","/admin/bbs_type/bbs_type_delete");
+			delete_form.submit();
+		}
+	});
+});
+</script>
