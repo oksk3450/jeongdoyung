@@ -1,0 +1,58 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<TableProxyOraclev11g class="oracle.dbtools.crest.model.design.storage.oracle.v11g.TableProxyOraclev11g" name="TBL_MEMBER" directorySegmentName="seg_0" id="1928F849-065E-A345-BD31-72637AADE070">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:37:29 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+<logging>YES</logging>
+<partitionedRowMovement>DISABLE</partitionedRowMovement>
+<temporaryChanged>false</temporaryChanged>
+<accessDriverType>oracle_loader</accessDriverType>
+<rejectLimit></rejectLimit>
+<columnProxies itemClass="oracle.dbtools.crest.model.design.storage.oracle.v12c.ColumnProxyOraclev12c">
+<ColumnProxy name="UPDATE_DATE" id="1761B9B6-28DF-DD58-C27E-0748EB30C317">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:49:17 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="USER_PW" id="63EE0E79-9EF7-0073-B04D-AF70420208EF">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:39:52 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="USER_ID" id="85DE9B04-95E3-3B81-B1FA-0F630D76CED2">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:39:09 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="EMAIL" id="AB2CF962-9A38-06F5-BA98-98BC0781FCE0">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:40:50 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="LEVELS" id="ADC5D74C-EF50-CF77-00AE-D72D095493E6">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:45:56 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="POINT" id="BC8FFE34-E964-6ED4-EB55-DBA42DA62DBE">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:42:04 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="REG_DATE" id="BFA82D78-A32E-1BF7-465A-1841A352316E">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:47:35 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="USER_NAME" id="D1C81BD8-E028-5041-C123-A21DAAD18AF9">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:40:26 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+<ColumnProxy name="ENABLED" id="EACF99DF-8C0F-E3E1-6830-67DEE3357C2D">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 02:43:56 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+</ColumnProxy>
+</columnProxies>
+</TableProxyOraclev11g>
