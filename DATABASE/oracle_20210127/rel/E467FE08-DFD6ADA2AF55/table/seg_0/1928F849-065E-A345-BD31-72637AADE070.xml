@@ -13,7 +13,6 @@
 <createdTime>2021-01-27 02:39:09 UTC</createdTime>
 <comment><![CDATA[사용자 아이디]]></comment>
 <ownerDesignName>oracle_20210127</ownerDesignName>
-<nullsAllowed>true</nullsAllowed>
 <useDomainConstraints>false</useDomainConstraints>
 <use>1</use>
 <logicalDatatype>LOGDT024</logicalDatatype>
@@ -124,4 +123,17 @@
 <autoIncrementCycle>false</autoIncrementCycle>
 </Column>
 </columns>
+<indexes itemClass="oracle.dbtools.crest.model.design.relational.Index">
+<ind_PK_UK id="A755F44E-533B-717B-8139-C18DDB47860E" name="TBL_MEMBER_PK">
+<createdBy>82107</createdBy>
+<createdTime>2021-01-27 08:30:28 UTC</createdTime>
+<ownerDesignName>oracle_20210127</ownerDesignName>
+<pk>true</pk>
+<indexState>Primary Constraint</indexState>
+<isSurrogateKey>false</isSurrogateKey>
+<indexColumnUsage>
+<colUsage columnID="85DE9B04-95E3-3B81-B1FA-0F630D76CED2"/>
+</indexColumnUsage>
+</ind_PK_UK>
+</indexes>
 </Table>
