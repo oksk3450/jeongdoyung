@@ -65,9 +65,10 @@
                   </div>
                   <div class="form-group">
                     <label for="enabled">enabled</label>
+                    <c:out value="${memberVO.enabled}" />여기
                     <select class="form-control" name="enabled" id="enabled">
-                        <option value="0" <c:out value="${(memberVO.enabled=='0')?'selected':''}" /> >false</option>
-                        <option value="1" <c:out value="${(memberVO.enabled=='1')?'selected':''}" /> >true</option>
+                        <option value="0" <c:out value="${(memberVO.enabled=='false')?'selected':''}" /> >false</option>
+                        <option value="1" <c:out value="${(memberVO.enabled=='true')?'selected':''}" /> >true</option>
                     </select>
                   <div class="form-group">
                     <label for="levels">levels</label>

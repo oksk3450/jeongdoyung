@@ -169,9 +169,9 @@ jQuery(document).ready(function(){
 						<li class="clear">
 							<label for="enabled_lbl" class="tit_lbl pilsoo_item">대기여부</label>
 							<div class="app_content radio_area">
-								<input disabled checked type="radio" name="enabled" class="css-radio" id="enabled_lbl"  />
+								<input disabled checked type="radio" name="" class="css-radio" id="enabled_lbl"  />
 								<label for="enabled_lbl">인증대기[관리자가 인증해야 로그인이 가능합니다.]</label>
-								<input type="hidden" name="enabled" vlaue="0" >
+								<input type="hidden" name="enabled" value="0" >
 							</div>
 						</li>
 						<li class="clear">
