@@ -20,7 +20,7 @@ memberMapper.xml: 회원관리에 대한 모든 쿼리를 모아서 관리하는
 		 user_name like '%'||#{search_keyword}||'%'
  	</if>
  	<if test="search_type == 'user_id'.toString()">
- 	 	 user_id like c'%'||#{search_keyword}||'%'
+ 	 	 user_id like '%'||#{search_keyword}||'%'
  	</if>
  	<if test="search_type == 'user_name'.toString()">
  	 	 user_name like '%'||#{search_keyword}||'%'
