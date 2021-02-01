@@ -138,7 +138,7 @@ public class LoginController {
 		 * String rawPassword = "1234"; BCryptPasswordEncoder bcryptPasswordEncoder =
 		 * new BCryptPasswordEncoder(10); String bcryptPassword =
 		 * bcryptPasswordEncoder.encode("1234");//예, user02 -> 암호화 처리됨
-		 * //System.out.println(bcryptPassword);//테스트시 이 암호를 DB회원테이블에 입력하시면 됩니다.
+		 * //System.out.println(bcryptPassword);//테스트시
 		 * System.out.println("2가지 스트링을 매칭 참,거짓: " +
 		 * bcryptPasswordEncoder.matches(rawPassword, bcryptPassword));
 		 */

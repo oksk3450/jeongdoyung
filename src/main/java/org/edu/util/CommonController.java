@@ -35,7 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * CommonController 공통사용(Admin,Home) 컨트롤러
- * @author 김일국
+ * @author 정도영
  *
  */
 @Controller
@@ -45,14 +45,12 @@ public class CommonController {
 	IF_MemberService memberService;
 	
 	@Inject
-	IF_BoardDAO boardDAO;//첨부파일을 개별 삭제하기 위해서 인젝트 합니다.
+	IF_BoardDAO boardDAO;//첨부파일을 개별 삭제하기 위해서 따로 인젝트 해줌
 	
 	/**
 	 * 첨부파일의 확장자를 비교해서 이미지인지, 엑셀,한글과같은 일반파일인지 확인하는 List객체변수
-	 * 사용용도1: 게시물상세보기 첨부파일이 이미지면 미리보기이미지가 보이도록, 이미지가 아니면, 다운로드링크만 보이도록
-	 * 사용용도2: 메인페이지 최근 겔러리 게시물에서 첨부파일이 있으면, 미리보기 이미지가 나오게 되는데, 
-	 * 만약 첨부파일이 이미지가 아니면, 대체 이미지를 보이기 위해서 확장자 체크가 필요합니다.
-	 * 변수생성 후 바로 리스트3개 입력처리.
+	 * 사용용도1: 메인페이지 TOP3에 미리보기 이미지가 나오도록, 이미지가 아닐시 다운로드 경로가 보이게하는 목적.
+	 * 사용용도2: 메인페이지 최근 갤러리 게시물에서 첨부파일의 미리보기 이미지가 나오는데 만약 이미지가 아니라면 대체 이미지를 위해 확장자 체크가 필요.
 	 */
 	@SuppressWarnings("serial")
 	private ArrayList<String> checkImgArray = new ArrayList<String>() {
@@ -64,11 +62,11 @@ public class CommonController {
 			add("bmp");
 		}
 	};
-	//첨부파일 업로드할 경로를 변수값으로 가져옴 servlet-context.xml에 있는 내용
+	//첨부파일 업로드할 경로를 변수값으로 가져옴(servlet-context.xml에 있는 내용)
 	@Resource(name="uploadPath")
 	private String uploadPath;//위 uploadPaht영역의 값을 uploadPath 멤버(전역)변수에 저장.
 	
-	public String getUploadPath() {//컨트롤러에서 파일 삭제시 호출로 사용 
+	public String getUploadPath() {//컨트롤러에서 파일 삭제시 호출로 사용
 		return uploadPath;
 	}
 
@@ -86,15 +84,15 @@ public class CommonController {
 	public ResponseEntity<byte[]> getImageAsByteArray(@RequestParam("save_file_name") String save_file_name, HttpServletResponse response) throws IOException {
 		FileInputStream fis = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		fis = new FileInputStream(uploadPath + "/" + save_file_name);//업로드된 이미지를 fis변수 저장
+		fis = new FileInputStream(uploadPath + "/" + save_file_name);//업로드된 이미지를 fis변수로 저장
 		int readCount = 0;
-		byte[] buffer = new byte[1024];//1k바이트 단위로 읽어 들이기 위해서
+		byte[] buffer = new byte[1024];
 		byte[] fileArray = null;
 	while((readCount = fis.read(buffer)) != -1){
 		baos.write(buffer,0,readCount);
 	}
 	fileArray = baos.toByteArray();//바이트 단위로 되있는 변수에 아웃풋스트림내용을 저장해서 return으로 반환
-	fis.close();//고전 자바프로그램에서는 메모리 관리를 위해서 fis파일인풋스트림 변수 생성후 소멸시키는 작업이 필수
+	fis.close();//고전 자바프로그램에서는 메모리 관리를 위해서 파일인풋스트림 변수 생성후 소멸시키는 작업이 필수
 	baos.close();//스프링프레임워크 기반의 프로그램구조에서는 close와 같은 메모리관리를 할 필요 없음.(스프링에 가비지컬렉트 기능 내장)
 	final HttpHeaders headers = new HttpHeaders();//크롬 개발자도구>네트워크>image_preview클릭>헤더탭확인
 	String ext = FilenameUtils.getExtension(save_file_name);//파일 확장자 구하기
@@ -113,9 +111,9 @@ public class CommonController {
 	}
 	return new ResponseEntity<byte[]>(fileArray, headers, HttpStatus.CREATED);
 	}
-	//파일 다운로드 구현한 메서드(아래)
+	//파일 다운로드 구현 메서드(아래)
 	@RequestMapping(value="/download", method=RequestMethod.GET)
-	@ResponseBody //이 애노테이션으로 지정된 메서드는 페이지 이동처리아니고, RestAPI처럼 현재페이지에 구현결과를 전송받습니다.
+	@ResponseBody //이 애노테이션으로 지정된 메서드는 RestAPI처럼 현재페이지에 구현결과를 전송받음(페이지 이동처리X)
 	public FileSystemResource download(
 			@RequestParam("save_file_name") String save_file_name,
 			@RequestParam("real_file_name") String real_file_name,
@@ -129,29 +127,29 @@ public class CommonController {
 		return new FileSystemResource(file);//실제 다운로드 시작
 	}
 	
-	//파일 업로드= xml에서 지정한 폴더에 실제파일 저장을 구현한 메서드(아래)
+	//파일 업로드= xml에서 지정한 폴더에 실제파일 저장을 구현 메서드(아래)
 	public String fileUpload(MultipartFile file) throws IOException {
 		String realFileName = file.getOriginalFilename();//jsp에서 전송한 파일명->확장자를 구하려고 사용
 		//폴더에 저장할 PK용 파일명 만들기(아래)
-		UUID uid = UUID.randomUUID();//유니크 아이디 생성 Unique ID: 폴더에 저장할 파일명으로 사용
-		//String saveFileName = uid.toString() + "." + realFileName.split("\\.")[1];//문제발생 아래코드 대체
+		UUID uid = UUID.randomUUID();//Unique ID 생성 : 폴더에 저장할 파일명으로 사용
+		//String saveFileName = uid.toString() + "." + realFileName.split("\\.")[1];//에러가 발생해서 아래코드 대체
 		String saveFileName = uid.toString() + "." + StringUtils.getFilenameExtension(realFileName);
 		//값.split("정규표현식");(Regular Expression):realFileName을 . 으로 분할해서 배열변수로 만드는 메서드
-		//예를 들면, abc.jpg -> realFileName[0] = abc, realFileName[1] = jpg 으로 결과가 나옵니다.
+		//예를 들면 abc.jpg -> realFileName[0] = abc, realFileName[1] = jpg 으로 결과 출력
 		//String[] files = new String[] {saveFileName};//saveFileName 스트링형을 배열변수 files로 형변환 
-		byte[] fileData = file.getBytes();//jsp폼에서 전송된 파일이 fileData변수(메모리)에 저장됩니다.
+		byte[] fileData = file.getBytes();//jsp폼에서 전송된 파일이 fileData변수(메모리)에 저장.
 		File target = new File(uploadPath, saveFileName);//파일저장 하기 바로전 설정저장.
-		FileCopyUtils.copy(fileData, target);//실제로 target폴더에 파일로 저장되는 메서드=업로드 종료
-		return saveFileName;//copy로 업로드 이후에 저장된 real_file_name 스트링문자열값 1개를 반환합니다.
+		FileCopyUtils.copy(fileData, target);//실제로 target폴더에 파일로 저장되는 메서드=업로드 종료.
+		return saveFileName;//copy로 업로드 이후에 저장된 real_file_name 스트링문자열값 1개를 반환.
 	}
 
-	//REST-API서비스로 사용할때 @ResponseBody애노테이션으로 json|텍스트데이터를 반환함(아래)
+	//REST-API서비스로 사용할때 @ResponseBody애노테이션으로 json|텍스트데이터를 반환(아래)
 	//아래는 Rest-API백엔드단, Ajax(jsp)부분은 Rest-API의 프론트엔드단.
 	@RequestMapping(value="/id_check",method=RequestMethod.GET)
 	@ResponseBody
 	public String id_check(@RequestParam("user_id") String user_id) {
 		String result = "0";//아이디 중복값을 체크하는 변수 초기값은 중복값 없음.
-		//Rest-API서비스에서는 스프링을 통해서 Ajax로 에러메세지를 받을수 없기 때문에 여기서 에러를 처리해야 합니다. 
+		//Rest-API서비스에서는 스프링을 통해서 Ajax로 에러메세지를 받을수 없기 때문에 여기서 에러를 처리해야 함. 
 		try {
 			MemberVO memberVO = memberService.readMember(user_id);
 			if(memberVO != null) {//아이디 중복값이 있을 경우
@@ -166,7 +164,7 @@ public class CommonController {
 	
 	@Transactional
 	@RequestMapping(value="/file_delete",method=RequestMethod.POST)
-	@ResponseBody //메서드 응답을 내용만 반환 받겠다고 명시 RestAPI 
+	@ResponseBody //메서드 응답을 내용만 반환 받겠다고 명시
 	public String file_delete(@RequestParam("save_file_name") String save_file_name) {
 		String result = "";
 		try {
