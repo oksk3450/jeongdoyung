@@ -108,6 +108,8 @@ public class DataSourceTest {
 		boardVO.setTitle("더미게시물");
 		boardVO.setContent("더미 내용 입니다.");
 		boardVO.setWriter("일반사용자");
+		Date reg_date = new Date();
+		boardVO.setReg_date(reg_date);
 		//boardVO.setBno(프라이머리키);
 		for(int cnt=0;cnt<=100;cnt++) {//더미게시물 100입력 
 			boardDAO.insertBoard(boardVO);
