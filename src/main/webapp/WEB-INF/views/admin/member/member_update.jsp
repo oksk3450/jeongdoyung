@@ -64,12 +64,11 @@
                     <input value="${memberVO.point}" type="text" class="form-control" name="point" id="point" placeholder="포인트를 입력해 주세요" required>  
                   </div>
                   <div class="form-group">
-                    <label for="enabled">enabled</label>
-                    <c:out value="${memberVO.enabled}" />여기
-                    <select class="form-control" name="enabled" id="enabled">
-                        <option value="0" <c:out value="${(memberVO.enabled=='false')?'selected':''}" /> >false</option>
-                        <option value="1" <c:out value="${(memberVO.enabled=='true')?'selected':''}" /> >true</option>
-                    </select>
+                  	<label for="enabled">enabled</label>
+                  	<select class="form-control" name="enabled" id="enabled">
+                  		<option value="0" <c:out value="${(memberVO.enabled=='false')?'selected':''}" /> >false</option>
+                  		<option value="1" <c:out value="${(memberVO.enabled=='true')?'selected':''}" /> >true</option>
+                  	</select>
                   <div class="form-group">
                     <label for="levels">levels</label>
                     <select class="form-control" name="levels" id="levels">

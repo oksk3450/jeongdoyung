@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,21 +65,20 @@ public class HomeController {
 	//사용자 홈페이지 게시판 삭제 매핑
 	@RequestMapping(value="/home/board/board_delete",method=RequestMethod.POST)
 	public String board_delete(RedirectAttributes rdat, @RequestParam("bno") Integer bno, @RequestParam("page") Integer page) throws Exception {
-		//첨부파일 삭제처리 후 게시글삭제(아래)
+		//부모 게시판에 첨부파일이 있다면 첨부파일 삭제처리 후 게시글 삭제(아래)
 		List<AttachVO> delFiles = boardService.readAttach(bno);
-		if(!delFiles.isEmpty()) {
-			for(AttachVO file_name:delFiles) {
+		if(!delFiles.isEmpty()) { //for(변수-한개:레코드-여러개){}
+			for(AttachVO file_name:delFiles) {//향상된 for반복문 입니다. 요즘은 이게 기본입니다.
 				File target = new File(commonController.getUploadPath(),file_name.getSave_file_name());
 				if(target.exists()) {
 					target.delete();//실제 업로드된 파일 지우기
 				}
 			}
 		}
-		//DB에서 댓글삭제 후 게시글 삭제(아래)
+		//DB에서 부모 게시판에 댓글이 있다면 댓글삭제처리 후 게시글 삭제처리-서비스에 있음(아래)
 		boardService.deleteBoard(bno);
-		
-		rdat.addFlashAttribute("msg", "삭제");//msg변수값은 URL에 표시가 나오지않게 숨겨서 board_list로 보냄
-		return "redirect:/home/board/board_list?page="+page;//쿼리스트링 변수는 URL에 표시가 됨.
+		rdat.addFlashAttribute("msg", "삭제");//msg변수값은 URL에 표시가 나오지 않게 숨겨서 board_list보낸다.
+		return "redirect:/home/board/board_list?page="+page;//쿼리스트링변수는 URL에 표시가 됩니다.
 	}
 	
 	//사용자 홈페이지 게시판 상세보기 매핑
@@ -113,6 +111,7 @@ public class HomeController {
 		model.addAttribute("checkImgArray", commonController.getCheckImgArray());
 		return "home/board/board_view";
 	}
+	
 	@RequestMapping(value="/home/board/board_update",method=RequestMethod.POST)
 	public String board_update(RedirectAttributes rdat,@RequestParam("file") MultipartFile[] files, BoardVO boardVO, PageVO pageVO) throws Exception {
 		//첨부파일 업로드
@@ -124,9 +123,9 @@ public class HomeController {
 			if(file.getOriginalFilename() != "") {
 				
 				int sun = 0;
-				for(AttachVO file_name:delFiles) {//실제 폴더에서 기존 첨부파일 삭제처리
+				for(AttachVO file_name:delFiles) {//실제 폴더에서 기존 첨부파일 삭제처리 
 					if(index==sun) {
-						File target = new File(commonController.getUploadPath(),file_name.getSave_file_name());//삭제할 파일 경로지정
+						File target = new File(commonController.getUploadPath(),file_name.getSave_file_name());//삭제할 파일경로 지정
 						if(target.exists()) {
 							target.delete();//기존 첨부파일 폴더에서 지우기
 							boardDAO.deleteAttach(file_name.getSave_file_name());//DB에서 기존파일 지우기
@@ -137,11 +136,11 @@ public class HomeController {
 				//신규파일 폴더에 업로드 처리
 				save_file_names[index] = commonController.fileUpload(file);//신규파일 폴더에 업로드
 				real_file_names[index] = file.getOriginalFilename();//신규파일 한글파일명 저장
-			}else {
+			}else{
 				save_file_names[index] = null;//신규파일 폴더에 업로드
 				real_file_names[index] = null;//신규파일 한글파일명 저장
 			}
-			index = index + 1;
+			index = index + 1; 
 		}
 		boardVO.setSave_file_names(save_file_names);
 		boardVO.setReal_file_names(real_file_names);
@@ -156,9 +155,19 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="/home/board/board_update",method=RequestMethod.GET)
-	public String board_update(Model model, @ModelAttribute("pageVO") PageVO pageVO, @RequestParam("bno") Integer bno) throws Exception {
+	public String board_update(HttpServletRequest request, Model model, @ModelAttribute("pageVO") PageVO pageVO, @RequestParam("bno") Integer bno) throws Exception {
 		BoardVO boardVO = boardService.readBoard(bno);
 		
+		//수정시 본인이 작성한 글인지 체크(아래)
+		String session_userid = (String) request.getSession().getAttribute("session_userid");
+		if(!session_userid.equals(boardVO.getWriter())) {
+			model.addAttribute("msg", "본인이 작성한 글만 수정 가능합니다.\\n이전페이지로 이동");
+			//redirect대신에 forward를 사용하면 Model을 사용 가능합니다.
+			//forward 새로고침하면, 게시글 테러가 발생가능함, redirect하면, 새로고침해도 게시글 테러가 발생X
+			return "forward:/home/board/board_view?bno="+bno;
+		}
+		
+		//첨부파일처리(아래)
 		List<AttachVO> files = boardService.readAttach(bno);
 		//아래변수 List<AttachVO>세로배치를 가로배치로 변경할때 필요
 		String[] save_file_names = new String[files.size()];
@@ -196,14 +205,13 @@ public class HomeController {
 			}
 			index = index + 1;
 		}
-		
 		boardVO.setSave_file_names(save_file_names);
 		boardVO.setReal_file_names(real_file_names);
 		//보안코딩으로 script 제거(아래)
 		String xssData = boardVO.getContent();
 		boardVO.setContent(securityCode.unscript(xssData));
 		
-		boardService.insertBoard(boardVO);//실제 DB 인서트
+		boardService.insertBoard(boardVO);//실제 DB에 인서트
 		rdat.addFlashAttribute("msg", "저장");
 		
 		return "redirect:/home/board/board_list";
@@ -243,13 +251,13 @@ public class HomeController {
 		memberService.updateMember(memberVO);
 		HttpSession session = request.getSession();
 		session.setAttribute("session_username", memberVO.getUser_name());//기존세션 덮어쓰기.
-		rdat.addFlashAttribute("msg", "회원수정");//model로 값을 보내지 못하는 이유는 redirect이기 때문.
+		rdat.addFlashAttribute("msg", "회원수정");//model로 값을 보내지 못하는 이유는 redirect 이기때문.
 		return "redirect:/member/mypage";
 	}
 	//사용자 홈페이지 회원 마이페이지 접근 매핑
 	@RequestMapping(value="/member/mypage",method=RequestMethod.GET)
 	public String mypage(HttpServletRequest request, Model model) throws Exception{
-		//마이페이지는 로그인 상태만 접근 가능하기 때문에, 로그인 세션변수중 로그인아이디 변수 session_userid를 이용
+		//마이페이지는 로그인 상태만 접근 가능하기 때문에, 로그인 세션변수중 로그인아이디변수 session_userid를 사용
 		HttpSession session = request.getSession();
 		MemberVO memberVO = memberService.readMember((String) session.getAttribute("session_userid"));
 		model.addAttribute("memberVO", memberVO);
@@ -269,7 +277,7 @@ public class HomeController {
 	//사용자 홈페이지 회원가입 처리 매핑
 	@RequestMapping(value="/join",method=RequestMethod.POST)
 	public String join(MemberVO memberVO, RedirectAttributes rdat) throws Exception {
-		//아래 3줄이 스프링 시큐리티에서 제공하는 패스워드암호화 처리
+		//아래 3줄이 스프링 시큐리티에서 제공하는 패스워드암호화 처리 
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		String user_pw_encode = passwordEncoder.encode(memberVO.getUser_pw());
 		memberVO.setUser_pw(user_pw_encode);
@@ -286,53 +294,54 @@ public class HomeController {
 	}
 	
 	//사용자 홈페이지 루트(최상위) 접근 매핑
-		@RequestMapping(value="/",method=RequestMethod.GET)
-		public String home(Model model) throws Exception{
-			PageVO pageVO = new PageVO();
-			pageVO.setPage(1);
-			pageVO.setPerPageNum(5);//하단페이징
-			pageVO.setQueryPerPageNum(5);
-			
-			//사용자 메인페이지에 출력할 게시판 지정, gallery 쿼리1
-			pageVO.setBoard_type("gallery");
-			List<BoardVO> board_list = boardService.selectBoard(pageVO);
-			model.addAttribute("board_list", board_list);
-			//사용자 메인페이지에 출력할 게시판 지정, notice 쿼리2
-			pageVO.setBoard_type("notice");
-			List<BoardVO> notice_list = boardService.selectBoard(pageVO);
-			model.addAttribute("notice_list", notice_list);
-			
-			//첨부파일 1개만 model클래스를 이용해서 jsp로 보냅니다.
-			String[] save_file_names = new String[board_list.size()];
-			int cnt = 0;
-			for(BoardVO boardVO:board_list) {//board_list변수에는 최대 5개의 레코드가 존재함.
-				List<AttachVO> file_list = boardService.readAttach(boardVO.getBno());
-				//System.out.println("디버그-file_list" + file_list);
-				if(file_list.size() == 0) {//첨부파일이 없을떄
-					save_file_names[cnt] = "";
-					System.out.println("디버그-[" + cnt + "]" + save_file_names[cnt]);
-					//continue;//컨티뉴 아래는 실행 하지 않고 거너띔
-				} else {
-					for(AttachVO file_name:file_list) {
-						String save_file_name = file_name.getSave_file_name();
-						String extName = FilenameUtils.getExtension(save_file_name);
-						boolean imgCheck = commonController.getCheckImgArray().contains(extName.toLowerCase());
-						if(imgCheck) {//첨부파일이 이미지일때
-							save_file_names[cnt] = save_file_name;
-							System.out.println("디버그[" + cnt + "]" + save_file_names[cnt]);
-							break;//이중 반복문에서 현재 for문만 종료
-						} else {//첨부파일이 엑셀,한글같은 파일일때
-							save_file_names[cnt] = "";
-							System.out.println("디버그[" + cnt + "]" + save_file_names[cnt]);
-						}
+	@RequestMapping(value="/",method=RequestMethod.GET)
+	public String home(Model model) throws Exception{
+		PageVO pageVO = new PageVO();
+		pageVO.setPage(1);
+		pageVO.setPerPageNum(5);//하단페이징
+		pageVO.setQueryPerPageNum(5);
+		
+		//사용자홈 메인페이지에 출력할 게시판 지정, gallery 쿼리1
+		pageVO.setBoard_type("gallery");
+		List<BoardVO> board_list = boardService.selectBoard(pageVO);
+		model.addAttribute("board_list", board_list);
+		
+		//사용자홈 메인페이지에 출력할 게시판 지정, notice 쿼리2
+		pageVO.setBoard_type("notice");
+		List<BoardVO> notice_list = boardService.selectBoard(pageVO);
+		model.addAttribute("notice_list", notice_list);
+		
+		//첨부파일 1개만 model클래스를 이용해서 jsp로 보냅니다.
+		String[] save_file_names = new String[board_list.size()];
+		int cnt = 0;
+		for(BoardVO boardVO:board_list) {//board_list변수에는 최대 5개의 레코드가 존재함.
+			List<AttachVO> file_list = boardService.readAttach(boardVO.getBno());
+			//System.out.println("디버그-file_list" + file_list);
+			if(file_list.size() == 0) {//첨부파일이 없을떄
+				save_file_names[cnt] = "";
+				System.out.println("디버그-[" + cnt + "]" + save_file_names[cnt]);
+				//continue;//컨티뉴 아래는 실행 하지 않고 거너띔
+			} else {
+				for(AttachVO file_name:file_list) {
+					String save_file_name = file_name.getSave_file_name();
+					String extName = FilenameUtils.getExtension(save_file_name);
+					boolean imgCheck = commonController.getCheckImgArray().contains(extName.toLowerCase());
+					if(imgCheck) {//첨부파일이 이미지일때
+						save_file_names[cnt] = save_file_name;
+						System.out.println("디버그[" + cnt + "]" + save_file_names[cnt]);
+						break;//이중 반복문에서 현재 for문만 종료
+					} else {//첨부파일이 엑셀,한글같은 파일일때
+						save_file_names[cnt] = "";
+						System.out.println("디버그[" + cnt + "]" + save_file_names[cnt]);
 					}
 				}
-				cnt = cnt + 1;
 			}
-			
-			model.addAttribute("save_file_names", save_file_names);
-			return "home/home";
+			cnt = cnt + 1;
 		}
+		
+		model.addAttribute("save_file_names", save_file_names);
+		return "home/home";
+	}
 	
 	/*@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model) {
